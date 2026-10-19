@@ -1,44 +1,47 @@
+"""Smart Model Router.
+
+Routes user prompts to local or cloud models based on security requirements,
+domain specialization, token volume, and user subscription tiers.
 """
-Lesson 07: Control Flow and Conditions - Smart Model Router
-This script routes user requests to different AI models based on the task type,
-calculates estimated cost, warns about long context lengths, and enforces tier limits.
-"""
 
-# Collect and clean inputs
-# Why: .strip().lower() normalizes user input so case variation doesn't break string matching.
-task_type = input("Enter task type (code, private, chat): ").strip().lower()
-tokens = int(input("Enter estimated tokens: "))
-is_paid_input = input("Is this a paid user? (yes/no): ").strip().lower()
-is_paid = is_paid_input == "yes"
 
-# Route model and set price per 1k tokens
-# Why: Control flow (if/elif/else) allows selecting specialized models and custom pricing dynamically.
-if task_type == "code":
-    model_name = "CodeLlama 34B"
-    price_per_1k = 0.002
-elif task_type == "private":
-    model_name = "Ollama / Llama3 (Local)"
-    price_per_1k = 0.0  # Free for local processing
-elif task_type == "chat":
-    model_name = "GPT-4o-mini"
-    price_per_1k = 0.00015
-else:
-    model_name = "Default LLM"
-    price_per_1k = 0.001
+def main():
+    raw_task_type = input("Task (code / private / chat): ")
+    task_type = raw_task_type.strip().lower()
 
-# Calculate total cost
-estimated_cost = (tokens / 1000) * price_per_1k
+    tokens_input = input("Estimated tokens: ")
+    estimated_tokens = int(tokens_input)
 
-# Context length check
-if tokens > 4000:
-    print("Warning: Token count exceeds 4000! Processing may be slower or truncated.")
-else:
-    print("Length is fine.")
+    # STRETCH GOAL: Check user tier eligibility
+    is_paid_input = input("Is this a paid user? (yes/no): ").strip().lower()
+    is_paid = is_paid_input == "yes"
 
-# Stretch challenge: Check tier limits for long requests
-if not is_paid and tokens > 2000:
-    print("Upgrade to send long requests.")
+    # Evaluates conditions sequentially to route request to optimal backend
+    if task_type == "private":
+        chosen_model = "llama3.2 (local, Ollama)"
+        price_per_1k = 0.0  # Zero cost because execution occurs on local hardware
+    elif task_type == "code":
+        chosen_model = "claude (cloud, strong at code)"
+        price_per_1k = 0.80
+    else:
+        chosen_model = "gpt-4o-mini (cloud, standard)"
+        price_per_1k = 0.20
 
-# Display final routing results
-print(f"\nSelected Model: {model_name}")
-print(f"Estimated Cost: ${estimated_cost:.2f}")
+    # Token length checks & stretch tier validation
+    if estimated_tokens > 4000:
+        print("Warning: long request, consider shortening it.")
+    elif estimated_tokens > 2000 and not is_paid:
+        # Using logical 'and' to restrict long context buffers to paying users only
+        print("Upgrade to send long requests.")
+    else:
+        print("Length is fine.")
+
+    # Calculate final cost
+    total_cost = (estimated_tokens / 1000) * price_per_1k
+
+    print(f"Chosen model: {chosen_model}")
+    print(f"Estimated cost: {total_cost:.2f} PKR")
+
+
+if __name__ == "__main__":
+    main()

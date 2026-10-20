@@ -42,3 +42,51 @@
 * **Q6 (Predicted Output):**
   `2: complaint`
   `3`
+
+  ## Lesson 2.5: Functions = Reusable AI Skills
+* **Q1:** c) None
+* **Q2:** b) A parameter without a default cannot come after one with a default
+* **Q3:** b) You forgot the brackets and the text: it should be summarize(text)
+* **Q4:** b) build_prompt("Explain loops", lines=2)
+* **Q5:** b) Write one ask_ai() function and build skills like summarize() on top of it
+* **Q6 (Predicted Output):**
+  Total: 1100.0
+  None
+
+---
+
+## Lesson 2.6: Files, JSON and Errors
+* **Q1:** c) "a"
+* **Q2:** b) Urdu and other languages stay readable in the file instead of \u... codes
+* **Q3:** b) It also hides your own bugs, so you never see what really broke
+* **Q4:** b) The Ollama app is not running, so LangChain cannot reach it
+* **Q5:** b) They hold private customer chats and should never reach a public repo
+* **Q6 (Predicted Output):**
+  Skipped abc
+  550
+
+---
+
+## Lesson 2.7: Structured Output
+* **Q1:** b) The same message should give the same data every time
+* **Q2:** b) Makes the model reply in the exact JSON shape described by the schema
+* **Q3:** b) Flag it for a human check: the name is not in the message, so the AI invented it
+* **Q4:** b) Python, using your PRICES dictionary
+* **Q5:** b) json.JSONDecodeError
+* **Q6 (Predicted Output):**
+  CHECK: pizza is not on the menu
+  500 (missing)
+
+---
+
+## Lesson 2.8: Your First Agent
+* **Q1:** b) It reads each tool's name and docstring
+* **Q2:** b) get_price.invoke({"item": "cupcake"})
+* **Q3:** b) "tool_call_id": call["id"], so the model knows which request the result answers
+* **Q4:** b) To stop the agent if it keeps calling tools without ever answering
+* **Q5:** c) place_order, because it spends money and changes data
+* **Q6 (Predicted Output):**
+  step 0: tool
+  step 1: tool
+  step 2: tool
+  Gave up: a human will help

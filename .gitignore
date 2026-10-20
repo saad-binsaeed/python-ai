@@ -1,3 +1,13 @@
 chat_history.json
 errors.log
 orders.json
+
+# Private customer data & logs
+orders.json
+transcript.json
+errors.log
+
+# Virtual environments & IDE
+.venv/
+__pycache__/
+.vscode/

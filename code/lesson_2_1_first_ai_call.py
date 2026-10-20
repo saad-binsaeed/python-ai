@@ -1,51 +1,53 @@
 """
-Lesson 2.1: Core Python for Your First LLM Apps - AI Tutor
-This script interacts with a local AI model (Ollama) via LangChain.
-It collects a user's topic and expertise level, configures system roles and
-temperature controls, and extracts response metadata like token counts and duration.
+AI Tutor Script
+A utility script that prompts the user for a topic and learning level, 
+invokes a local LLM via init_chat_model, and reports the answer along with token usage and duration.
 """
 
+import time
 from langchain.chat_models import init_chat_model
 
-# 1. Collect and clean inputs
-# Why: .strip() prevents leading or trailing whitespace from cluttering system prompts.
-topic = input("Enter a topic to learn about: ").strip()
-level = input("Enter your level (beginner or expert): ").strip().lower()
 
-# Fallback for empty inputs
-if not topic:
-    topic = "Python Programming"
-if level not in ["beginner", "expert"]:
-    level = "beginner"
+def main():
+    # Requirement 1: Prompt for topic and level, cleaning input with .strip()
+    topic = input("Topic:   ").strip()
+    level = input("Level (beginner or expert): ").strip().lower()
 
-# 2. Build system prompt based on user expertise
-system_message = (
-    f"You are a helpful AI Tutor. Explain the topic to a {level}. "
-    f"Keep your explanation concise, engaging, and limited to 3-4 sentences."
-)
+    if not topic or not level:
+        print("Topic and level cannot be empty.")
+        return
 
-# 3. Initialize the model
-# Why: Creating the model instance once allows re-use and sets fixed generation parameters like temperature.
-# Note: Using temperature=0.2 for focused, consistent educational responses.
-llm = init_chat_model("llama3.2", model_provider="ollama", temperature=0.2)
+    # Requirement 2: System message specifying role, answer length, and learning level
+    # Why: Explicitly defining persona and response constraints prevents overly verbose or complex answers.
+    system_prompt = (
+        f"You are a helpful tutor explaining topics at a {level} level. "
+        "Explain the topic clearly and concisely in 2 to 3 sentences."
+    )
 
-print(f"\n[Generating explanation for '{topic}' as an {level}...]\n")
+    messages = [
+        {"role": "system", "content": system_prompt},
+        {"role": "user", "content": f"Explain {topic}"},
+    ]
 
-# 4. Invoke the model
-response = llm.invoke([
-    {"role": "system", "content": system_message},
-    {"role": "user", "content": f"Explain: {topic}"}
-])
+    # Requirement 3: Initialize model with temperature 0.2 and call .invoke()
+    # Why: Setting temperature to 0.2 produces consistent, grounded explanations suitable for an educational context.
+    model = init_chat_model("llama3.2", model_provider="ollama", temperature=0.2)
 
-# 5. Extract and print the answer
-print("--- AI Tutor Answer ---")
-print(response.text)
-print("-" * 25)
+    start_time = time.perf_counter()
+    response = model.invoke(messages)
+    end_time = time.perf_counter()
 
-# 6. Extract and format response metadata
-# Why: Tracking tokens and duration helps monitor API resource usage and cost estimation.
-output_tokens = response.usage_metadata.get("total_tokens", 0)
-duration_ns = response.response_metadata.get("total_duration", 0)
-duration_sec = duration_ns / 1_000_000_000
+    elapsed_time = end_time - start_time
 
-print(f"Metrics: {output_tokens} total tokens used | Response time: {duration_sec:.1f} seconds")
+    # Extract token usage metadata from response
+    total_tokens = response.usage_metadata.get("total_tokens", 0)
+
+    # Requirement 4: Print formatted output
+    print("\n" + "=" * 40)
+    print(response.content)
+    print("=" * 40)
+    print(f"{total_tokens} tokens in {elapsed_time:.1f} seconds")
+
+
+if __name__ == "__main__":
+    main()

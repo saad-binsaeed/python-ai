@@ -1,0 +1,13 @@
+{
+  "business_name": "Sweet Crumbs Bakery",
+  "city": "Lahore",
+  "hours": "9:00 AM to 10:00 PM daily",
+  "delivery": "200 PKR; free above 3,000 PKR",
+  "prices": {
+    "chocolate cake": 1500,
+    "cupcake": 250,
+    "brownie": 300,
+    "donut": 200,
+    "mango tart": 0
+  }
+}
